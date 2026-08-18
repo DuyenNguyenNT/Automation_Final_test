@@ -1,0 +1,25 @@
+{
+  "updatedName": "new name",
+
+  "validUser": {
+    "username": "duyen",
+    "password": "Password@1",
+    "originalName": "Nguyen Thi Duyen"
+  },
+
+  "invalidUser": {
+    "username": "",
+    "password": "",
+    "originalName": ""
+  },
+
+  "product1": {
+    "name": "Túi xách nữ",
+    "quantity": 1
+  },
+
+  "product2": {
+    "name": "Kính mát",
+    "quantity": 1
+  }
+}
