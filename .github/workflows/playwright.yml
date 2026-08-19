@@ -1,51 +1,47 @@
 name: Playwright Tests
 
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push events for the main branch
   push:
-    branches: [ main ]
-  # Triggers the workflow on pull request events targeting the main branch
+    branches: [ main, master ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, master ]
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "test"
   test:
-    # The type of runner that the job will run on
+    timeout-minutes: 60
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # 1. Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - name: Check out repository
-        uses: actions/checkout@v4
-
-      # 2. Sets up Node.js in the runner environment
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 18 # Use a stable LTS version of Node.js
-
-      # 3. Installs your project's dependencies
+          node-version: 20 # Use a recent LTS Node.js version
       - name: Install dependencies
-        run: npm install
-
-      # 4. Installs the Playwright browsers and their system dependencies
+        run: npm ci
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
-
-      # 5. Runs your Playwright tests
       - name: Run Playwright tests
         run: npx playwright test
-
-      # 6. Uploads the Allure test report as an artifact
-      # This step runs even if the tests fail, so you can always see the report
-      - name: Upload Allure report
+      - name: Generate Allure Report
+        if: always() # Always run this step, even if tests fail
+        run: npx allure generate allure-results --clean -o allure-report
+      - name: Upload Allure Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: allure-report
-          path: allure-results/
-          retention-days: 7 # Keep the report for 7 days
+          path: allure-report
+          retention-days: 5 # Keep report for 5 days
+      - name: Upload Playwright Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-results
+          path: test-results
+          retention-days: 5 # Keep results for 5 days
+      - name: Upload Playwright HTML Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-html-report
+          path: playwright-report
+          retention-days: 5 # Keep report for 5 days
