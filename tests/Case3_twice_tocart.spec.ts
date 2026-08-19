@@ -8,9 +8,12 @@ test.describe('Case 3: Add the same product twice - quantity increments correctl
   let userToken = '';
   const targetProduct = testData.product1.name; // Use product name from testData.json
 
-  test.beforeEach(async ({ loggedInUser }) => {
+  test.beforeEach(async ({ loggedInUser, request }) => {
     userToken = loggedInUser;
     Logger.info('User is logged in via fixture');
+    // Ensure a clean state before every test and every retry
+    Logger.info('Cleaning up test data before test execution');
+    await cleanupTestData(request, userToken);
   });
 
   test.afterEach(async ({ request }) => {

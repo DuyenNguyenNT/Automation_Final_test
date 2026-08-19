@@ -8,10 +8,13 @@ test.describe('Case 2: Add a single product to cart', () => {
   const targetProduct = testData.product1.name;
   let userToken = '';
 
-  test.beforeEach(async ({ loggedInUser }) => {
+  test.beforeEach(async ({ loggedInUser, request }) => {
     // The loggedInUser fixture now handles login AND returns the token!
     userToken = loggedInUser;
     Logger.info('User is logged in via fixture');
+    // Ensure a clean state before every test and every retry
+    Logger.info('Cleaning up test data before test execution');
+    await cleanupTestData(request, userToken);
   });
 
   test.afterEach(async ({ request }) => {
