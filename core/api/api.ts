@@ -1,5 +1,6 @@
 import { APIRequestContext } from '@playwright/test';
 import { ENV } from '../../env/env';
+import { Logger } from '../utils/logger';
 
 export class APIHelper {
     private request: APIRequestContext;
@@ -8,11 +9,6 @@ export class APIHelper {
         this.request = request;
     }
 
-
-
-    /**
-     * Get current user profile
-     */
     async getProfile(token: string) {
         const response = await this.request.get(`${ENV.BASE_URL}/api/profile`, {
             headers: { Authorization: `Bearer ${token}` },
@@ -20,9 +16,6 @@ export class APIHelper {
         return response.json().catch(() => ({}));
     }
 
-    /**
-     * Update profile name via PATCH /api/profile
-     */
     async updateProfile(name: string, token: string) {
         const response = await this.request.patch(`${ENV.BASE_URL}/api/profile`, {
             data: { name },
@@ -31,11 +24,6 @@ export class APIHelper {
         return response.json().catch(() => ({}));
     }
 
-
-
-    /**
-     * Update (overwrite) cart
-     */
     async updateCart(items: any[], token: string) {
         const response = await this.request.put(`${ENV.BASE_URL}/api/cart`, {
             data: { items },
@@ -44,20 +32,25 @@ export class APIHelper {
         return response.json().catch(() => ({}));
     }
 
-    // Clear cart
-    async clearCart(token: string) {
+    async clearCart(token: string): Promise<boolean> {
         const response = await this.request.post(`${ENV.BASE_URL}/api/cart/clear`, {
             headers: { Authorization: `Bearer ${token}` },
         });
-        return response.status();
+        const success = response.ok();
+        if (!success) {
+            Logger.error(`API Error: clearCart failed with status ${response.status()} and text: ${await response.text()}`);
+        }
+        return success;
     }
 
-    // Delete all orders for current user
-
-    async deleteAllOrders(token: string) {
+    async deleteAllOrders(token: string): Promise<boolean> {
         const response = await this.request.delete(`${ENV.BASE_URL}/api/orders`, {
             headers: { Authorization: `Bearer ${token}` },
         });
-        return response.status();
+        const success = response.ok();
+        if (!success) {
+            Logger.error(`API Error: deleteAllOrders failed with status ${response.status()} and text: ${await response.text()}`);
+        }
+        return success;
     }
 }

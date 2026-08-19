@@ -28,13 +28,23 @@ export const cleanupTestData = async (request: APIRequestContext, token: string)
         
         // 1. Clear Cart
         Logger.info('Clearing user cart...');
-        await api.clearCart(token);
+        const cartCleared = await api.clearCart(token);
+        if (!cartCleared) {
+            Logger.warn('Cleanup warning: Clearing cart via API may have failed.');
+        }
         
         // 2. Delete Orders
         Logger.info('Deleting all user orders...');
-        await api.deleteAllOrders(token);
+        const ordersDeleted = await api.deleteAllOrders(token);
+        if (!ordersDeleted) {
+            Logger.warn('Cleanup warning: Deleting orders via API may have failed.');
+        }
         
-        Logger.info('Test data cleanup completed successfully');
+        if (cartCleared && ordersDeleted) {
+            Logger.info('Test data cleanup completed successfully');
+        } else {
+            Logger.error('Test data cleanup FAILED. Check previous API error logs.');
+        }
     } catch (error) {
         Logger.error('Failed to clean up test data', error);
     }
