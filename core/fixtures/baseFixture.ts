@@ -2,7 +2,7 @@ import { test as base } from '@playwright/test';
 import { LoginPage } from '../../page-objects/LoginPage';
 import { ProductPage } from '../../page-objects/ProductPage';
 import { CartPage } from '../../page-objects/CartPage';
-import { CheckoutPage } from '../../page-objects/CheckoutPage';
+import { CheckoutPage } from '../../page-objects/CheckOutPage';
 import { ProfilePage } from '../../page-objects/ProfilePage';
 import { Logger } from '../utils/logger';
 import testData from '../../env/test-data/testData.json';
